@@ -1,4 +1,10 @@
 import os
+import pupygrib as grib
+
+"""
+pip install -r requirements.txt
+pupygrib
+"""
 
 """
 _<дата начала: ггггММддччмм>+<заблаговременность, ч: ччч>H<заблаговременность, мин: мм>M
@@ -63,10 +69,10 @@ class Forecast:
 
 class ForecastChecker:
     """
-    forecast_step - шаг прогноза
-    min_lead - мин заблаговременность
-    max_lead - макс заблаговременность
-    lead_step - шаг заблаговременности
+    forecast_step - шаг прогноза в часах
+    min_lead - мин заблаговременность в часах
+    max_lead - макс заблаговременность в часах
+    lead_step - шаг заблаговременности в часах
     """
     def __init__(self, forecast_step, min_lead, max_lead, lead_step):
         self.forecast_step = forecast_step
@@ -74,12 +80,38 @@ class ForecastChecker:
         self.max_lead = max_lead
         self.lead_step = lead_step
 
-    def nextForecast(forecast):
-        pass
+    def nextForecast(self, forecast):
+        # copy forecast to next
+        nextForecast = Forecast()
+        # TODO: refactor to normal carriers
+        nextForecast.lead_hours = (forecast.lead_hours + self.lead_step) % self.max_lead
+        delta_hours = int((forecast.lead_hours + self.lead_step) / self.max_lead)
+        #print("delta_hours", delta_hours)
+        nextForecast.hours = (delta_hours * self.forecast_step) % 24
+        delta_days = int((delta_hours * self.forecast_step) / 24)
+        #print("delta_days", delta_days)
+        nextForecast.day = (forecast.day + delta_days) % 29
+        delta_months = int((forecast.day + delta_days) / 29)
+        #print("delta_months", delta_months)
+        nextForecast.month = int(forecast.month + delta_months) % 13
+        delta_years = int((forecast.month + delta_months) / 13)
+        #print("delta_years", delta_years)
+        nextForecast.year = forecast.year + delta_years
+        return nextForecast
 
 
 def open_file(filepath):
-    print("NOT IMPLEMENT")
+    with open("./dataset/" + filepath, 'rb') as stream:
+        try: 
+            for i, msg in enumerate(grib.read(stream), 1):
+                lons, lats = msg.get_coordinates()
+##                values = msg.get_values()
+##                print("Message {}: {}".format(i, lons.shape))
+##                print("Message {}: {:.3f} {}".format(i, values.mean(), lons.shape))
+        except Exception as e:
+            print(filepath," ", str(e))
+            
+
 
 def main():
     fullpath = "./dataset"
@@ -92,14 +124,21 @@ def main():
         print(str(e))
     else:
         #print(file_folder_list)
-        open_file(file_folder_list[0])
-        fulldate = file_folder_list[0].split('_')[2]
-        forecast = Forecast()
-        forecast.parseFromString(fulldate)
-        print(fulldate)
-        print(forecast)
-        forecast.debugPrint()
-        checker = ForecastChecker(6, 0, 60, 1)
+        for i, file in enumerate(file_folder_list):
+##            print("File ", i)
+            open_file(file)
+        
+##        open_file(file_folder_list[1])
+##        fulldate = file_folder_list[0].split('_')[-1]
+##        print(fulldate)
+##        forecast = Forecast()
+##        forecast.parseFromString(fulldate)
+##        print(forecast)
+##        forecast.debugPrint()
+##        checker = ForecastChecker(6, 0, 60, 1)
+##        nextForecast = checker.nextForecast(forecast)
+##        print(nextForecast)
+##        print(file_folder_list[1].split('_')[-1])
 
 
 
@@ -109,6 +148,6 @@ if __name__ == "__main__":
     try:
         main()
     except KeyboardInterrupt:
-        print("Stop serving")
+        print("Stop program")
     except Exception as e:
         print(str(e))
