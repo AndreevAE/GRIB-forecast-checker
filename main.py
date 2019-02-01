@@ -102,15 +102,15 @@ class ForecastChecker:
 
 def open_file(filepath):
     with open("./dataset/" + filepath, 'rb') as stream:
-        try: 
+        try:
             for i, msg in enumerate(grib.read(stream), 1):
                 lons, lats = msg.get_coordinates()
-##                values = msg.get_values()
-##                print("Message {}: {}".format(i, lons.shape))
-##                print("Message {}: {:.3f} {}".format(i, values.mean(), lons.shape))
+                # values = msg.get_values()
+                # print("Message {}: {}".format(i, lons.shape))
+                # print("Message {}: {:.3f} {}".format(i, values.mean(), lons.shape))
         except Exception as e:
             print(filepath," ", str(e))
-            
+
 
 
 def main():
@@ -123,22 +123,26 @@ def main():
     except Exception as e:
         print(str(e))
     else:
-        #print(file_folder_list)
-        for i, file in enumerate(file_folder_list):
-##            print("File ", i)
-            open_file(file)
-        
-##        open_file(file_folder_list[1])
-##        fulldate = file_folder_list[0].split('_')[-1]
-##        print(fulldate)
-##        forecast = Forecast()
-##        forecast.parseFromString(fulldate)
-##        print(forecast)
-##        forecast.debugPrint()
-##        checker = ForecastChecker(6, 0, 60, 1)
-##        nextForecast = checker.nextForecast(forecast)
-##        print(nextForecast)
-##        print(file_folder_list[1].split('_')[-1])
+        file_folder_list.sort()
+        # for file in file_folder_list:
+        #     print(file)
+
+        # print(file_folder_list)
+        # for i, file in enumerate(file_folder_list):
+           # print("File ", i)
+            # open_file(file)
+
+        open_file(file_folder_list[0])
+        fulldate = file_folder_list[0].split('_')[-1]
+        print(fulldate)
+        forecast = Forecast()
+        forecast.parseFromString(fulldate)
+        print(forecast)
+        # forecast.debugPrint()
+        checker = ForecastChecker(6, 0, 60, 1)
+        nextForecast = checker.nextForecast(forecast)
+        print(nextForecast)
+        print(file_folder_list[1].split('_')[-1])
 
 
 
