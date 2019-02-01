@@ -106,7 +106,7 @@ def open_file(filepath):
             for i, msg in enumerate(grib.read(stream), 1):
                 lons, lats = msg.get_coordinates()
                 # values = msg.get_values()
-                # print("Message {}: {}".format(i, lons.shape))
+                print("Message {}: {}".format(i, lons.shape))
                 # print("Message {}: {:.3f} {}".format(i, values.mean(), lons.shape))
         except Exception as e:
             print(filepath," ", str(e))
@@ -128,21 +128,21 @@ def main():
         #     print(file)
 
         # print(file_folder_list)
-        # for i, file in enumerate(file_folder_list):
-           # print("File ", i)
-            # open_file(file)
+        for i, file in enumerate(file_folder_list):
+            print("File ", file)
+            open_file(file)
 
-        open_file(file_folder_list[0])
+##        open_file(file_folder_list[0])
         fulldate = file_folder_list[0].split('_')[-1]
-        print(fulldate)
+##        print(fulldate)
         forecast = Forecast()
         forecast.parseFromString(fulldate)
-        print(forecast)
+##        print(forecast)
         # forecast.debugPrint()
         checker = ForecastChecker(6, 0, 60, 1)
         nextForecast = checker.nextForecast(forecast)
-        print(nextForecast)
-        print(file_folder_list[1].split('_')[-1])
+##        print(nextForecast)
+##        print(file_folder_list[1].split('_')[-1])
 
 
 
