@@ -21,3 +21,6 @@ MIKAEL_9912050000+001H00M
 3) variables pressure_altitude_above_msl, u-component_of_wind_height_above_ground, v-component_of_wind_height_above_ground. dimensions: 1x1x606x606
 
 4) file correctly open and not corrupted
+HIRLAM_C11_201302250000+009H00M   end-of-message marker not found
+HIRLAM_C11_201302280600+041H00M   end-of-message marker not found
+MIKAEL_9912050000+001H00M   not a GRIB message
